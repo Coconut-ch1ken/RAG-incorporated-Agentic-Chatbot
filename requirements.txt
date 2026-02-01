@@ -1,0 +1,9 @@
+langchain
+langgraph
+langchain-google-genai
+langchain-community
+chromadb>=0.5.0
+pandas
+pydantic
+pydantic-settings
+python-dotenv
