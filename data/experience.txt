@@ -1,0 +1,20 @@
+Work Experience:
+
+1. Software Engineering Intern — TechCorp Inc. (May 2025 - Aug 2025)
+   - Worked on backend services using Python and FastAPI
+   - Built a data pipeline for processing customer analytics
+   - Technologies: Python, PostgreSQL, Docker, AWS Lambda
+
+2. Teaching Assistant — University of Waterloo (Sep 2024 - Dec 2024)
+   - TA for CS 136: Elementary Algorithm Design and Data Abstraction
+   - Held weekly office hours and graded assignments
+   - Helped 200+ students with C programming and algorithm concepts
+
+3. Personal Projects:
+   - RAG-incorporated Agentic Chatbot (current project)
+     - Built a personal assistant using LangChain, LangGraph, Ollama, and ChromaDB
+     - Implemented multi-tier generation with local and cloud LLMs
+   - Speech-to-Formula App
+     - Converts spoken math formulas to LaTeX using macOS hotkeys
+   - Portfolio Website
+     - Built with Next.js and deployed on Vercel

@@ -1,1 +1,13 @@
 My name is James Yuan. I study Computer Science at the University of Waterloo.
+I am currently in my 3rd year of studies.
+My student ID is 20XXXXXX.
+
+I enjoy building AI and machine learning projects.
+My favourite programming languages are Python and TypeScript.
+I am especially interested in Retrieval-Augmented Generation (RAG) and agentic AI systems.
+
+My hobbies include playing basketball, reading sci-fi novels, and gaming.
+I also enjoy cooking Chinese food, particularly Sichuan cuisine.
+
+I was born and raised in China before moving to Canada for university.
+I speak Mandarin Chinese and English fluently.

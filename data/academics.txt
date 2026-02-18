@@ -1,0 +1,15 @@
+I am currently taking the following courses this term:
+- CS 341: Algorithms (with Professor Smith)
+- CS 370: Numerical Computation
+- CS 348: Introduction to Database Management
+- STAT 331: Applied Linear Models
+
+Last term I took:
+- CS 246: Object-Oriented Software Development (Final grade: A)
+- CS 251: Computer Organization and Design (Final grade: A-)
+- MATH 239: Introduction to Combinatorics (Final grade: B+)
+
+My cumulative GPA is 3.7 out of 4.0.
+
+I am considering specializing in Artificial Intelligence or Data Science.
+I plan to apply for co-op jobs in machine learning engineering for the Summer 2026 term.
