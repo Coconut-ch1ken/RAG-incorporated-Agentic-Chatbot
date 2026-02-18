@@ -1,46 +1,60 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+"""
+Grade Node — filters retrieved documents for relevance using local Ollama.
+"""
+from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.output_parsers import StrOutputParser
 from src.graph.state import GraphState
+from src.config import settings
 
-class GradeDocuments:
-    """Binary score for relevance check on retrieved documents."""
-    binary_score: str = Field(description="Documents are relevant to the question, 'yes' or 'no'")
+
+def _parse_yes_no(response: str) -> bool:
+    """Robustly parse a yes/no response from an LLM."""
+    cleaned = response.strip().lower()
+    if cleaned.startswith("no"):
+        return False
+    return "yes" in cleaned
+
 
 class GradeNode:
     def __init__(self):
-        self.llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
+        self.llm = ChatOllama(
+            model=settings.ollama_model,
+            base_url=settings.ollama_base_url,
+            temperature=0,
+        )
 
     def __call__(self, state: GraphState) -> GraphState:
         print("---CHECK RELEVANCE---")
         question = state["question"]
         documents = state["documents"]
-        
-        # Structure the LLM output
-        structured_llm = self.llm.with_structured_output(GradeDocuments)
 
-        system = """You are a grader assessing relevance of a retrieved document to a user question. \n 
-        If the document contains keyword(s) or semantic meaning related to the question, grade it as relevant. \n
-        Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question."""
-        
-        grade_prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", system),
-                ("human", "Retrieved document: \n\n {document} \n\n User question: {question}"),
-            ]
-        )
+        grade_prompt = ChatPromptTemplate.from_messages([
+            (
+                "system",
+                "You are a grader. You must respond with ONLY the word 'yes' or 'no', "
+                "nothing else.\n\n"
+                "Assess whether a retrieved document is relevant to the user's question.\n"
+                "If the document contains keywords or meaning related to the question, "
+                "answer 'yes'. Otherwise answer 'no'.",
+            ),
+            (
+                "human",
+                "Document:\n{document}\n\n"
+                "Question: {question}\n\n"
+                "Is this document relevant? Respond with only 'yes' or 'no':",
+            ),
+        ])
 
-        retrieval_grader = grade_prompt | structured_llm
-        
+        chain = grade_prompt | self.llm | StrOutputParser()
+
         filtered_docs = []
         for doc in documents:
-            score = retrieval_grader.invoke({"question": question, "document": doc})
-            grade = score.binary_score
-            if grade == "yes":
+            result = chain.invoke({"question": question, "document": doc})
+            if _parse_yes_no(result):
                 print("---GRADE: DOCUMENT RELEVANT---")
                 filtered_docs.append(doc)
             else:
                 print("---GRADE: DOCUMENT NOT RELEVANT---")
-                continue
-        
+
         return {"documents": filtered_docs}

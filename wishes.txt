@@ -1,0 +1,20 @@
+I need a personalized chatbot incorporating RAG such that:
+
+- has a vector database, containing my personal info in a variety of information, such as text, images, and audio
+
+- the vector database should also be able to store data spanning a long period of time
+
+- the vector database should be able to update and store data from multiple sources. However, for now,
+  let's just fetch data from a specific local directory, and then, through a local llm, embbed the fetched data
+  in the vector database
+
+- when ever I ask a question, it will first search the vector database for relevant information
+  - If the relevant information is enough to answer the question, then:
+    - the program should answer the question directly
+
+  - If the relevant information is not enough to answer the question, then:
+    - the program should fetch information of me relevant to the question from the database first,
+      and send them to the an online llm, along with my original prompt, so that the online llm
+      can generate a full answer based on the relevant information
+
+- it should be able to answer questions about my personal information
