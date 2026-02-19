@@ -2,6 +2,9 @@
 Streamlit Web UI for the Personal Assistant RAG Chatbot.
 Run with: .venv/bin/streamlit run streamlit_app.py
 """
+from dotenv import load_dotenv
+load_dotenv()  # Load .env before anything else needs GOOGLE_API_KEY
+
 import streamlit as st
 from src.graph.workflow import RagAgent
 from src.ingestion.directory_scanner import DirectoryScanner
