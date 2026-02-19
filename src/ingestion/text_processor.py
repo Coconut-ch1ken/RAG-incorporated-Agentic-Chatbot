@@ -12,9 +12,16 @@ CHUNK_OVERLAP = 50
 
 
 def process_text_file(file_path: str, user_id: str) -> Tuple[List[str], List[Dict[str, Any]]]:
-    """Read a .txt or .md file, chunk it, and return (documents, metadatas)."""
+    """Read a .txt or .md file, chunk it, and return (documents, metadatas).
+
+    Lines starting with '#' are treated as comments and excluded.
+    """
     with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-        raw_text = f.read()
+        lines = f.readlines()
+
+    # Filter out comment lines (only lines where # is the very first character)
+    filtered_lines = [line for line in lines if not line.startswith("#")]
+    raw_text = "".join(filtered_lines)
 
     return _chunk_and_prepare(raw_text, file_path, user_id, source_type="text")
 
