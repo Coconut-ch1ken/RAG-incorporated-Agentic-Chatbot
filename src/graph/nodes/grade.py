@@ -1,28 +1,22 @@
 """
-Grade Node — filters retrieved documents for relevance using local Ollama.
+Grade Node — filters retrieved documents for relevance using local Ollama
+with Pydantic structured output.
 """
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from src.graph.state import GraphState
+from src.graph.schemas import GradeResult
 from src.config import settings
-
-
-def _parse_yes_no(response: str) -> bool:
-    """Robustly parse a yes/no response from an LLM."""
-    cleaned = response.strip().lower()
-    if cleaned.startswith("no"):
-        return False
-    return "yes" in cleaned
 
 
 class GradeNode:
     def __init__(self):
-        self.llm = ChatOllama(
+        llm = ChatOllama(
             model=settings.ollama_model,
             base_url=settings.ollama_base_url,
             temperature=0,
         )
+        self.structured_llm = llm.with_structured_output(GradeResult)
 
     def __call__(self, state: GraphState) -> GraphState:
         print("---CHECK RELEVANCE---")
@@ -32,26 +26,25 @@ class GradeNode:
         grade_prompt = ChatPromptTemplate.from_messages([
             (
                 "system",
-                "You are a grader. You must respond with ONLY the word 'yes' or 'no', "
-                "nothing else.\n\n"
-                "Assess whether a retrieved document is relevant to the user's question.\n"
-                "If the document contains keywords or meaning related to the question, "
-                "answer 'yes'. Otherwise answer 'no'.",
+                "You are a grader assessing whether a retrieved document is "
+                "relevant to the user's question.\n"
+                "If the document contains keywords or meaning related to the "
+                "question, grade it as relevant.",
             ),
             (
                 "human",
                 "Document:\n{document}\n\n"
                 "Question: {question}\n\n"
-                "Is this document relevant? Respond with only 'yes' or 'no':",
+                "Is this document relevant to the question?",
             ),
         ])
 
-        chain = grade_prompt | self.llm | StrOutputParser()
+        chain = grade_prompt | self.structured_llm
 
         filtered_docs = []
         for doc in documents:
-            result = chain.invoke({"question": question, "document": doc})
-            if _parse_yes_no(result):
+            result: GradeResult = chain.invoke({"question": question, "document": doc})
+            if result.score:
                 print("---GRADE: DOCUMENT RELEVANT---")
                 filtered_docs.append(doc)
             else:

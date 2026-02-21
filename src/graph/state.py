@@ -15,3 +15,4 @@ class GraphState(TypedDict):
     generation_tier: str          # "local", "powerful", or "gemini"
     retry_count: int              # Number of generation retries
     user_id: str                  # User context
+    sources: List[str]            # Source filenames for citation

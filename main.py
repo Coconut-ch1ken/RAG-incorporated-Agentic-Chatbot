@@ -92,6 +92,11 @@ def main():
                         print("  ❌ No relevant data found in your files.")
                     else:
                         print(f"  ⚠️  Answer may not be fully grounded ({tier_label})")
+
+                # Show source citations
+                sources = result.get("sources", [])
+                if sources:
+                    print(f"  📎 Sources: {', '.join(sources)}")
             else:
                 if not result.get("documents"):
                     print("❌ No relevant data found. Try ingesting more files with /scan.")

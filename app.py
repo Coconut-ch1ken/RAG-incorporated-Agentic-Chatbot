@@ -141,6 +141,9 @@ for msg in st.session_state.messages:
                 unsafe_allow_html=True,
             )
         st.markdown(msg["content"])
+        # Show source citations in history
+        if msg.get("sources"):
+            st.caption(f"📎 Sources: {', '.join(msg['sources'])}")
 
 # Chat input
 if prompt := st.chat_input("问点什么？"):
@@ -170,8 +173,14 @@ if prompt := st.chat_input("问点什么？"):
         )
         st.markdown(generation)
 
+        # Show source citations
+        sources = result.get("sources", [])
+        if sources:
+            st.caption(f"📎 Sources: {', '.join(sources)}")
+
     st.session_state.messages.append({
         "role": "assistant",
         "content": generation,
         "tier": tier,
+        "sources": result.get("sources", []),
     })

@@ -10,10 +10,13 @@ class TestProcessCsvFile:
     """测试 process_csv_file 函数。"""
 
     def test_returns_documents_and_metadatas(self, sample_csv_file):
-        """验证正常 CSV 返回非空的文档和元数据列表。"""
+        """验证正常 CSV 返回单个合并文档。"""
         docs, metas = process_csv_file(sample_csv_file, user_id="test_user")
-        assert len(docs) == 2  # 2 行数据
-        assert len(metas) == 2
+        assert len(docs) == 1  # 整个表合并为一个文档
+        assert len(metas) == 1
+        # Both rows should be in the single document
+        assert "Alice" in docs[0]
+        assert "Bob" in docs[0]
 
     def test_row_serialization_format(self, sample_csv_file):
         """验证行被序列化为 'Column: Value' 格式。"""
@@ -46,4 +49,9 @@ class TestProcessCsvFile:
             writer.writerow(["Alice", "", "Toronto"])
         docs, _ = process_csv_file(str(file_path), user_id="test_user")
         assert len(docs) == 1
-        assert "Age" not in docs[0]  # 空值应被跳过
+        # The preamble lists "Age" as a column, but no "Age: <value>" row should exist
+        lines = docs[0].split("\n")
+        row_lines = [l for l in lines if l.startswith("Age:")]
+        assert len(row_lines) == 0  # NaN values should be skipped
+        assert "Name: Alice" in docs[0]
+        assert "City: Toronto" in docs[0]
