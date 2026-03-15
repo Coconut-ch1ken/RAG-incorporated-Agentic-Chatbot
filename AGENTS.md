@@ -7,40 +7,41 @@ This project is a hallucination-proof RAG chatbot utilizing **LangChain**, **Lan
 
 ## 1. Build, Run, and Test Commands
 
-The project uses **Poetry** for dependency management.
+The project uses **uv** for dependency management (managed via **mise**).
 
 ### Setup
-Ensure you have Poetry installed.
+Ensure you have mise and uv installed.
 ```bash
-poetry install
+mise install        # installs uv + python as defined in mise.toml
+uv sync             # installs all project dependencies
 ```
 
 ### Running the Application
 The entry point is `main.py` in the root directory.
 ```bash
-poetry run python main.py
+uv run python main.py
 ```
 *Note: Ensure `.env` is configured with `GOOGLE_API_KEY` before running.*
 
 ### Testing
-There are currently no existing tests. Agents are expected to **add tests** for any new functionality using `pytest`.
+Tests are located in the `tests/` directory using `pytest`.
 
 *Recommended workflow for adding/running tests:*
 1.  Add `pytest` to dev dependencies if missing:
     ```bash
-    poetry add --group dev pytest
+    uv add --group dev pytest
     ```
 2.  Run all tests:
     ```bash
-    poetry run pytest
+    uv run pytest
     ```
 3.  Run a single test file:
     ```bash
-    poetry run pytest tests/path/to/test_file.py
+    uv run pytest tests/path/to/test_file.py
     ```
 4.  Run a specific test case:
     ```bash
-    poetry run pytest tests/path/to/test_file.py::test_function_name
+    uv run pytest tests/path/to/test_file.py::test_function_name
     ```
 
 ### Linting & Formatting
@@ -49,13 +50,13 @@ The project follows standard Python conventions. Agents should use `ruff` for li
 *Recommended commands:*
 ```bash
 # Add ruff if missing
-poetry add --group dev ruff
+uv add --group dev ruff
 
 # Run linter
-poetry run ruff check .
+uv run ruff check .
 
 # Format code
-poetry run ruff format .
+uv run ruff format .
 ```
 
 ## 2. Code Style & Conventions
@@ -101,7 +102,7 @@ def retrieve(self, state: GraphState) -> dict:
 ## 3. Agentic Workflow Rules
 
 1.  **Exploration**: Before making changes, explore existing nodes in `src/graph/nodes/` to understand the state flow.
-2.  **Dependencies**: If adding a new library, use `poetry add <library>`. Do not manually edit `pyproject.toml` or `requirements.txt` unless necessary.
+2.  **Dependencies**: If adding a new library, use `uv add <library>`. Do not manually edit `pyproject.toml` or `requirements.txt` unless necessary.
 3.  **No Hallucinations**: When modifying the RAG logic, ensure the "hallucination grader" or verification steps in the graph are preserved or enhanced.
 4.  **Verification**: After generating code, **always** attempt to run it. If writing a new node, create a simple test script to verify its input/output transformation.
 
